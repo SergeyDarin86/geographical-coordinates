@@ -8,14 +8,13 @@ import java.util.List;
 @Data
 public class Location {
 
-    //    @JsonProperty("place_id")
     private long place_id;
 
     @JsonProperty("licence")
     private String licence;
 
     private String name;
-    //    @JsonProperty("boundingBox")
+
     private List<String> boundingBox;
 
     @JsonProperty("geojson")

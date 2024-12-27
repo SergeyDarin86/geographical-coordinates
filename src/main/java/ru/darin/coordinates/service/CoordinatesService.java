@@ -22,13 +22,12 @@ public class CoordinatesService {
 
         Location[] response = restTemplate.getForObject(url, Location[].class);
 
-        int countOfCoordinates = response[0].getGeoJson().getCoordinates().get(0).get(0).size();
+        int countOfCoordinates = response[0].getGeoJson().getCoordinates().get(0).size();
         System.out.println(countOfCoordinates + ": count of coordinates");
-        System.out.println(response[0].getGeoJson().getCoordinates().get(0).get(0).get(6608));
 
         double longitude = 0;
         double latitude = 0;
-        for (List<Float>doubles : response[0].getGeoJson().getCoordinates().get(0).get(0)){
+        for (List<Float>doubles : response[0].getGeoJson().getCoordinates().get(0)){
             longitude += doubles.get(0);
             latitude += doubles.get(1);
         }
