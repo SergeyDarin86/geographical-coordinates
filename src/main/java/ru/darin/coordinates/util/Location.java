@@ -15,16 +15,13 @@ public class Location {
 
     private String name;
 
-    private List<String> boundingBox;
-
     @JsonProperty("geojson")
     private GeoJson geoJson;
 
-    public Location(long place_id, String licence, String name, List<String> boundingBox, GeoJson geoJson) {
+    public Location(long place_id, String licence, String name, GeoJson geoJson) {
         this.place_id = place_id;
         this.licence = licence;
         this.name = name;
-        this.boundingBox = boundingBox;
         this.geoJson = geoJson;
     }
 }
