@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.darin</groupId>
-	<artifactId>coordinates</artifactId>
+	<artifactId>coordinatesForGeoCenters</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>coordinates</name>
-	<description>Demo project for definition of geographic coordinates</description>
+	<name>coordinatesForGeoCenters</name>
+	<description>Demo project for definition of geographic coordinatesForGeoCenters</description>
 	<url/>
 	<licenses>
 		<license/>
