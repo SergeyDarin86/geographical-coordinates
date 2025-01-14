@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: coordinatesForGeoCenters
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/geo_center
+    username: postgres
+    password: 16s11w86d

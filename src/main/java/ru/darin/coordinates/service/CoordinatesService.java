@@ -3,6 +3,8 @@ package ru.darin.coordinates.service;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import ru.darin.coordinates.model.Region;
+import ru.darin.coordinates.repository.RegionRepository;
 import ru.darin.coordinates.util.CoordinatesForGeoCenter;
 import ru.darin.coordinates.util.CoordinateResponse;
 import ru.darin.coordinates.util.Location;
@@ -14,9 +16,11 @@ import java.util.List;
 public class CoordinatesService {
 
     private final RestTemplate restTemplate;
+    private final RegionRepository repository;
 
-    public CoordinatesService(RestTemplate restTemplate) {
+    public CoordinatesService(RestTemplate restTemplate, RegionRepository repository) {
         this.restTemplate = restTemplate;
+        this.repository = repository;
     }
 
     @Cacheable("cacheForRegion")
@@ -38,6 +42,7 @@ public class CoordinatesService {
         double centerForLatitude = latitude / countOfCoordinates;
         System.out.println(centerForLongitude + " <- longitude");
         System.out.println(centerForLatitude + " <- latitude");
+        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
 
         return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
@@ -69,8 +74,18 @@ public class CoordinatesService {
 
         double centerForLongitude = longitude / countOfCoordinates;
         double centerForLatitude = latitude / countOfCoordinates;
+        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
 
         return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+    }
+
+    public void saveCoordinates(String regionName, double longitude, double latitude) {
+        Region region = new Region();
+        region.setRegionName(regionName);
+        region.setLongitude(longitude);
+        region.setLatitude(latitude);
+        if (repository.findRegionByRegionName(regionName).isEmpty())
+            repository.save(region);
     }
 
 }

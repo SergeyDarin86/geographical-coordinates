@@ -9,6 +9,14 @@ import ru.darin.coordinates.util.CoordinateResponse;
 @RestController
 public class CoordinatesController {
 
+    //TODO:
+    // 1) добавить БД в проект (возможно будет одна таблица)
+    // 2) сделать DTO + Mapper
+    // 3) сделать валидацию вводимых данных (только строки)
+    // 4) добавить ExceptionHandler (такого региона нет; форма для ввода не должна быть пустой)
+    // 5) запуск в докере
+    // 6) тестирование
+    // 7) документация
     private final CoordinatesService service;
 
     public CoordinatesController(CoordinatesService service) {
