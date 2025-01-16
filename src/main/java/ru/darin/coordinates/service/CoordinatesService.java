@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import ru.darin.coordinates.model.Region;
 import ru.darin.coordinates.repository.RegionRepository;
-import ru.darin.coordinates.util.CoordinatesForGeoCenter;
 import ru.darin.coordinates.util.CoordinateResponse;
+import ru.darin.coordinates.util.CoordinatesForGeoCenter;
 import ru.darin.coordinates.util.Location;
 import ru.darin.coordinates.util.LocationForDistrict;
 
@@ -23,17 +23,16 @@ public class CoordinatesService {
         this.repository = repository;
     }
 
+    public Location[] getResponse(String url) {
+        return restTemplate.getForObject(url, Location[].class);
+    }
+
     @Cacheable("cacheForRegion")
     public CoordinateResponse getCoordinatesForRegion(String url) {
-
-        Location[] response = restTemplate.getForObject(url, Location[].class);
-
-        int countOfCoordinates = response[0].getGeoJson().getCoordinates().get(0).size();
-        System.out.println(countOfCoordinates + ": count of coordinates");
-
+        int countOfCoordinates = getResponse(url)[0].getGeoJson().getCoordinates().get(0).size();
         double longitude = 0;
         double latitude = 0;
-        for (List<Float> doubles : response[0].getGeoJson().getCoordinates().get(0)) {
+        for (List<Float> doubles : getResponse(url)[0].getGeoJson().getCoordinates().get(0)) {
             longitude += doubles.get(0);
             latitude += doubles.get(1);
         }
@@ -42,9 +41,9 @@ public class CoordinatesService {
         double centerForLatitude = latitude / countOfCoordinates;
         System.out.println(centerForLongitude + " <- longitude");
         System.out.println(centerForLatitude + " <- latitude");
-        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
+        saveCoordinates(getResponse(url)[0].getName(), centerForLongitude, centerForLatitude);
 
-        return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+        return new CoordinateResponse(getResponse(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
 
     @Cacheable("cacheForDistrict")
