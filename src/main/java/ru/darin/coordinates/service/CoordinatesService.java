@@ -23,16 +23,20 @@ public class CoordinatesService {
         this.repository = repository;
     }
 
-    public Location[] getResponse(String url) {
+    public Location[] getResponseForRegion(String url) {
         return restTemplate.getForObject(url, Location[].class);
+    }
+
+    public LocationForDistrict[] getResponseForDistrict(String url){
+        return restTemplate.getForObject(url, LocationForDistrict[].class);
     }
 
     @Cacheable("cacheForRegion")
     public CoordinateResponse getCoordinatesForRegion(String url) {
-        int countOfCoordinates = getResponse(url)[0].getGeoJson().getCoordinates().get(0).size();
+        int countOfCoordinates = getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0).size();
         double longitude = 0;
         double latitude = 0;
-        for (List<Float> doubles : getResponse(url)[0].getGeoJson().getCoordinates().get(0)) {
+        for (List<Float> doubles : getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0)) {
             longitude += doubles.get(0);
             latitude += doubles.get(1);
         }
@@ -41,21 +45,18 @@ public class CoordinatesService {
         double centerForLatitude = latitude / countOfCoordinates;
         System.out.println(centerForLongitude + " <- longitude");
         System.out.println(centerForLatitude + " <- latitude");
-        saveCoordinates(getResponse(url)[0].getName(), centerForLongitude, centerForLatitude);
+        saveCoordinates(getResponseForRegion(url)[0].getName(), centerForLongitude, centerForLatitude);
 
-        return new CoordinateResponse(getResponse(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+        return new CoordinateResponse(getResponseForRegion(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
 
     @Cacheable("cacheForDistrict")
     public CoordinateResponse getCoordinatesForDistrict(String url) {
-
-        LocationForDistrict[] response = restTemplate.getForObject(url, LocationForDistrict[].class);
-        int countOfCoordinates = response[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0).size();
-
+        int countOfCoordinates = getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0).size();
         double longitude = 0;
         double latitude = 0;
 
-        for (List<Float> doubles : response[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0)) {
+        for (List<Float> doubles : getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0)) {
             longitude += doubles.get(0);
             latitude += doubles.get(1);
         }
@@ -63,7 +64,7 @@ public class CoordinatesService {
 //        for (List<Float>floats : response[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0)){
 //            System.out.println(floats);
 //        }
-        int countOfParts = response[0].getGeoJsonForDistrict().getCoordinatesForDistrict().size();
+        int countOfParts = getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().size();
 
         System.out.println("===============");
         System.out.println(longitude + ": lon");
@@ -73,9 +74,9 @@ public class CoordinatesService {
 
         double centerForLongitude = longitude / countOfCoordinates;
         double centerForLatitude = latitude / countOfCoordinates;
-        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
+        saveCoordinates(getResponseForDistrict(url)[0].getName(), centerForLongitude, centerForLatitude);
 
-        return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+        return new CoordinateResponse(getResponseForDistrict(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
 
     public void saveCoordinates(String regionName, double longitude, double latitude) {

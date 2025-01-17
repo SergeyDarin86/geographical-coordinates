@@ -3,6 +3,7 @@ package ru.darin.coordinates.util.exceptions;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import ru.darin.coordinates.util.Location;
+import ru.darin.coordinates.util.LocationForDistrict;
 
 import java.util.List;
 
@@ -26,5 +27,11 @@ public class ExceptionBuilder {
         }
     }
 
+    public static void buildErrorMessageForClientDistrictNotFound(LocationForDistrict[] response) {
+        if (response.length == 0) {
+            String errorMsg = "Не найдено федерального округа с таким названием";
+            throw new CoordinatesExceptionNotFound(errorMsg);
+        }
+    }
 
 }
