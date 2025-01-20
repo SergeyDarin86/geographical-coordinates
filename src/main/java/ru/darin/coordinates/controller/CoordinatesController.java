@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.darin.coordinates.dto.SearchDTO;
+import ru.darin.coordinates.dto.SearchDTOForRegion;
 import ru.darin.coordinates.dto.SearchDTOForDistrict;
 import ru.darin.coordinates.service.CoordinatesService;
 import ru.darin.coordinates.util.CoordinateResponse;
@@ -37,9 +37,9 @@ public class CoordinatesController {
     }
 
     @GetMapping("/getGeoCenter")
-    public ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTO searchDTO, BindingResult bindingResult){
+    public ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTOForRegion searchDTOForRegion, BindingResult bindingResult){
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
-        String url = "https://nominatim.openstreetmap.org/search?state=" + searchDTO.getLocation() + "&country=russia&format=json&polygon_geojson=1";
+        String url = "https://nominatim.openstreetmap.org/search?state=" + searchDTOForRegion.getLocation() + "&country=russia&format=json&polygon_geojson=1";
         ExceptionBuilder.buildErrorMessageForClientRegionNotFound(service.getResponseForRegion(url));
         return ResponseEntity.ok(service.getCoordinatesForRegion(url));
     }
