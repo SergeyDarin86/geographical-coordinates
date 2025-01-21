@@ -8,10 +8,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = CustomValidatorForRegion.class)
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidSearchDTOForRegion {
+@Constraint(validatedBy = {CustomValidatorForRegion.class, CustomValidatorForDistrict.class})
+public @interface ValidSearchDTO {
     String message() default "Ошибка валидации";
 
     Class<?>[] groups() default {};

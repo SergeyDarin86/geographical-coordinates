@@ -2,11 +2,11 @@ package ru.darin.coordinates.util;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import ru.darin.coordinates.dto.SearchDTOForRegion;
+import ru.darin.coordinates.dto.SearchDTOForDistrict;
 
-public class CustomValidatorForRegion implements ConstraintValidator<ValidSearchDTO, SearchDTOForRegion> {
+public class CustomValidatorForDistrict implements ConstraintValidator<ValidSearchDTO, SearchDTOForDistrict> {
     @Override
-    public boolean isValid(SearchDTOForRegion dto, ConstraintValidatorContext context) {
+    public boolean isValid(SearchDTOForDistrict dto, ConstraintValidatorContext context) {
         boolean isValid = true;
         if (dto.getLocation() == null || dto.getLocation().isEmpty()) {
             context.disableDefaultConstraintViolation();
@@ -15,10 +15,10 @@ public class CustomValidatorForRegion implements ConstraintValidator<ValidSearch
                     .addPropertyNode("location")
                     .addConstraintViolation();
             isValid = false;
-        } else if (!dto.getLocation().matches("[А-ЯЁ]?[а-яё]+ [а-яё]+")) {
+        } else if (!dto.getLocation().matches("[а-яё]+")) {
             context.disableDefaultConstraintViolation();
             context
-                    .buildConstraintViolationWithTemplate("Название региона должно соответствовать следующему формату: 'Нижегородская область' либо 'Нижегородская обл'")
+                    .buildConstraintViolationWithTemplate("Название региона должно соответствовать следующему формату: 'пфо'")
                     .addPropertyNode("location").addConstraintViolation();
             isValid = false;
         }

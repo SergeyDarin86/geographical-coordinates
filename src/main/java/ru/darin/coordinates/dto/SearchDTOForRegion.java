@@ -1,10 +1,10 @@
 package ru.darin.coordinates.dto;
 
 import lombok.Data;
-import ru.darin.coordinates.util.ValidSearchDTOForRegion;
+import ru.darin.coordinates.util.ValidSearchDTO;
 
 @Data
-@ValidSearchDTOForRegion
+@ValidSearchDTO
 public class SearchDTOForRegion {
     private String location;
 }
