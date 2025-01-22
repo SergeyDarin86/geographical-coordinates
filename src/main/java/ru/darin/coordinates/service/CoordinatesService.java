@@ -10,6 +10,7 @@ import ru.darin.coordinates.util.CoordinatesForGeoCenter;
 import ru.darin.coordinates.util.Location;
 import ru.darin.coordinates.util.LocationForDistrict;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,7 +28,7 @@ public class CoordinatesService {
         return restTemplate.getForObject(url, Location[].class);
     }
 
-    public LocationForDistrict[] getResponseForDistrict(String url){
+    public LocationForDistrict[] getResponseForDistrict(String url) {
         return restTemplate.getForObject(url, LocationForDistrict[].class);
     }
 
@@ -36,6 +37,7 @@ public class CoordinatesService {
         int countOfCoordinates = getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0).size();
         double longitude = 0;
         double latitude = 0;
+
         for (List<Float> doubles : getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0)) {
             longitude += doubles.get(0);
             latitude += doubles.get(1);
@@ -52,31 +54,34 @@ public class CoordinatesService {
 
     @Cacheable("cacheForDistrict")
     public CoordinateResponse getCoordinatesForDistrict(String url) {
-        int countOfCoordinates = getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0).size();
         double longitude = 0;
         double latitude = 0;
 
-        for (List<Float> doubles : getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0)) {
-            longitude += doubles.get(0);
-            latitude += doubles.get(1);
+        LocationForDistrict[] response = getResponseForDistrict(url);
+        List<List<Float>> maxPartOfDistrict = getMaxPartOfDistrict(response);
+        int countOfCoordinates = maxPartOfDistrict.size();
+
+        for (List<Float> list : maxPartOfDistrict) {
+            longitude += list.get(0);
+            latitude += list.get(1);
         }
-
-//        for (List<Float>floats : response[0].getGeoJsonForDistrict().getCoordinatesForDistrict().get(0).get(0)){
-//            System.out.println(floats);
-//        }
-        int countOfParts = getResponseForDistrict(url)[0].getGeoJsonForDistrict().getCoordinatesForDistrict().size();
-
-        System.out.println("===============");
-        System.out.println(longitude + ": lon");
-        System.out.println(latitude + ": lat");
-        System.out.println(countOfParts + ": count of parts");
-        System.out.println("===============");
 
         double centerForLongitude = longitude / countOfCoordinates;
         double centerForLatitude = latitude / countOfCoordinates;
-        saveCoordinates(getResponseForDistrict(url)[0].getName(), centerForLongitude, centerForLatitude);
+        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
 
-        return new CoordinateResponse(getResponseForDistrict(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+        return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+    }
+
+    // нахожу самую большую часть округа и по ней определяю географический центр
+    // острова и отдельные мелкие части не учитываю (пример для СЗФО - Калининградская обл)
+    public List<List<Float>> getMaxPartOfDistrict(LocationForDistrict[] response) {
+        List<List<Float>> maxPartOfDistrict = new ArrayList<>();
+        for (List<List<List<Float>>> floats : response[0].getGeoJsonForDistrict().getCoordinatesForDistrict()) {
+            if (maxPartOfDistrict.size() > floats.get(0).size()) continue;
+            maxPartOfDistrict = floats.get(0);
+        }
+        return maxPartOfDistrict;
     }
 
     public void saveCoordinates(String regionName, double longitude, double latitude) {
