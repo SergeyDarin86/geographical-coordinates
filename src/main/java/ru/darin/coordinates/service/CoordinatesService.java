@@ -34,22 +34,21 @@ public class CoordinatesService {
 
     @Cacheable("cacheForRegion")
     public CoordinateResponse getCoordinatesForRegion(String url) {
-        int countOfCoordinates = getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0).size();
+        Location[] response = getResponseForRegion(url);
+        int countOfCoordinates = response[0].getGeoJson().getCoordinates().get(0).size();
         double longitude = 0;
         double latitude = 0;
 
-        for (List<Float> doubles : getResponseForRegion(url)[0].getGeoJson().getCoordinates().get(0)) {
+        for (List<Float> doubles : response[0].getGeoJson().getCoordinates().get(0)) {
             longitude += doubles.get(0);
             latitude += doubles.get(1);
         }
 
         double centerForLongitude = longitude / countOfCoordinates;
         double centerForLatitude = latitude / countOfCoordinates;
-        System.out.println(centerForLongitude + " <- longitude");
-        System.out.println(centerForLatitude + " <- latitude");
-        saveCoordinates(getResponseForRegion(url)[0].getName(), centerForLongitude, centerForLatitude);
+        saveCoordinates(response[0].getName(), centerForLongitude, centerForLatitude);
 
-        return new CoordinateResponse(getResponseForRegion(url)[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
+        return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
 
     @Cacheable("cacheForDistrict")
@@ -73,8 +72,6 @@ public class CoordinatesService {
         return new CoordinateResponse(response[0].getName(), new CoordinatesForGeoCenter(centerForLatitude, centerForLongitude));
     }
 
-    // нахожу самую большую часть округа и по ней определяю географический центр
-    // острова и отдельные мелкие части не учитываю (пример для СЗФО - Калининградская обл)
     public List<List<Float>> getMaxPartOfDistrict(LocationForDistrict[] response) {
         List<List<Float>> maxPartOfDistrict = new ArrayList<>();
         for (List<List<List<Float>>> floats : response[0].getGeoJsonForDistrict().getCoordinatesForDistrict()) {
