@@ -7,3 +7,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/geo_center
     username: postgres
     password: 16s11w86d
+
+logging:
+  level:
+    ru.ru.darin.coordinates: info
+    org:
+      springframework: ${LOG:info}
+  file:
+    name: logs/log
