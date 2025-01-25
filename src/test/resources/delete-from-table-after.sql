@@ -1,0 +1,1 @@
+delete from region where region_id > 0;
