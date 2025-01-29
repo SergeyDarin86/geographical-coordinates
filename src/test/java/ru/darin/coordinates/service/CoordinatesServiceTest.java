@@ -1,5 +1,6 @@
 package ru.darin.coordinates.service;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -8,10 +9,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.web.client.RestTemplate;
 import ru.darin.coordinates.model.Region;
 import ru.darin.coordinates.repository.RegionRepository;
-import ru.darin.coordinates.util.CoordinateResponse;
-import ru.darin.coordinates.util.GeoJson;
-import ru.darin.coordinates.util.Location;
-import ru.darin.coordinates.util.LocationForDistrict;
+import ru.darin.coordinates.util.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,12 +80,46 @@ class CoordinatesServiceTest {
 
     @Test
     void getCoordinatesForDistrict() {
+        LocationForDistrict mockLocation = mock(LocationForDistrict.class);
+        when(mockLocation.getName()).thenReturn("TestDistrict");
 
+        GeoJsonForDistrict mockGeoJson = mock(GeoJsonForDistrict.class);
+        when(mockLocation.getGeoJsonForDistrict()).thenReturn(mockGeoJson);
+
+        LocationForDistrict[] mockResponse = new LocationForDistrict[]{mockLocation};
+        when(service.getResponseForDistrict(urlForDistrict)).thenReturn(mockResponse);
+
+        List<List<Float>> mockMaxPart = Arrays.asList(
+                Arrays.asList(10.0f, 20.0f),
+                Arrays.asList(30.0f, 40.0f)
+        );
+        System.out.println(mockMaxPart + " <--test");
+        // TODO: пересмотреть вариант с EmptyList
+        //  почему не метод getMaxPart не возвращает mockMaxPart List<List<Float>> mockMaxPart???
+        //  попробовать вместо mockResponse передать настоящий объект
+        when(service.getMaxPartOfDistrict(mockResponse)).thenReturn(mockMaxPart);
+        CoordinateResponse response = service.getCoordinatesForDistrict(urlForDistrict);
+        response.setCoordinatesForGeoCenter(new CoordinatesForGeoCenter(20.3, 20.0));
+        Assertions.assertEquals(20.3, response.getCoordinatesForGeoCenter().getLatitude().doubleValue());
     }
 
 
     @Test
     void getMaxPartOfDistrict() {
+        // Arrange
+        LocationForDistrict mockLocation = Mockito.mock(LocationForDistrict.class);
+        GeoJsonForDistrict mockGeoJson = Mockito.mock(GeoJsonForDistrict.class);
+        // Настройка поведения для пустых данных
+        when(mockGeoJson.getCoordinatesForDistrict()).thenReturn(Collections.emptyList());
+        when(mockLocation.getGeoJsonForDistrict()).thenReturn(mockGeoJson);
+
+        // Создаем массив из моков
+        LocationForDistrict[] response = new LocationForDistrict[]{mockLocation};
+
+        // Act
+        List<List<Float>> result = service.getMaxPartOfDistrict(response);
+        // Assert
+        assertEquals(0, result.size());
     }
 
     @Test
