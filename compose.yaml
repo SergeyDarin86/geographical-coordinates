@@ -3,6 +3,7 @@ version: "3.8"
 services:
   sqldb:
     image: postgres:13.3
+    container_name: geo-center-db
     restart: unless-stopped
     networks:
       - geoCenter-network
@@ -15,6 +16,7 @@ services:
     volumes:
       - ./initSql:/docker-entrypoint-initdb.d
   app:
+    container_name: geo-center-app
     depends_on:
       - sqldb
     build:
@@ -40,4 +42,5 @@ volumes:
 
 networks:
   geoCenter-network:
+    name: geo-center-network
     driver: bridge
