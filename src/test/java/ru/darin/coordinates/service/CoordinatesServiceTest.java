@@ -87,17 +87,10 @@ class CoordinatesServiceTest {
         when(mockLocation.getGeoJsonForDistrict()).thenReturn(mockGeoJson);
 
         LocationForDistrict[] mockResponse = new LocationForDistrict[]{mockLocation};
-        when(service.getResponseForDistrict(urlForDistrict)).thenReturn(mockResponse);
 
-        List<List<Float>> mockMaxPart = Arrays.asList(
-                Arrays.asList(10.0f, 20.0f),
-                Arrays.asList(30.0f, 40.0f)
-        );
-        System.out.println(mockMaxPart + " <--test");
-        // TODO: пересмотреть вариант с EmptyList
-        //  почему не метод getMaxPart не возвращает mockMaxPart List<List<Float>> mockMaxPart???
-        //  попробовать вместо mockResponse передать настоящий объект
-        when(service.getMaxPartOfDistrict(mockResponse)).thenReturn(mockMaxPart);
+        when(service.getResponseForDistrict(urlForDistrict)).thenReturn(mockResponse);
+        when(service.getMaxPartOfDistrict(mockResponse)).thenReturn(Collections.emptyList());
+
         CoordinateResponse response = service.getCoordinatesForDistrict(urlForDistrict);
         response.setCoordinatesForGeoCenter(new CoordinatesForGeoCenter(20.3, 20.0));
         Assertions.assertEquals(20.3, response.getCoordinatesForGeoCenter().getLatitude().doubleValue());
@@ -106,19 +99,15 @@ class CoordinatesServiceTest {
 
     @Test
     void getMaxPartOfDistrict() {
-        // Arrange
         LocationForDistrict mockLocation = Mockito.mock(LocationForDistrict.class);
         GeoJsonForDistrict mockGeoJson = Mockito.mock(GeoJsonForDistrict.class);
-        // Настройка поведения для пустых данных
+
         when(mockGeoJson.getCoordinatesForDistrict()).thenReturn(Collections.emptyList());
         when(mockLocation.getGeoJsonForDistrict()).thenReturn(mockGeoJson);
 
-        // Создаем массив из моков
         LocationForDistrict[] response = new LocationForDistrict[]{mockLocation};
-
-        // Act
         List<List<Float>> result = service.getMaxPartOfDistrict(response);
-        // Assert
+
         assertEquals(0, result.size());
     }
 

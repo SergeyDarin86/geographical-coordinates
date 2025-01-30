@@ -20,21 +20,10 @@ import ru.darin.coordinates.util.exceptions.CoordinatesExceptionNotFound;
 public class CoordinatesController {
 
     //TODO:
-    // + 1)  добавить БД в проект (возможно будет одна таблица)
-    // 2) сделать DTO + Mapper
-    // +3) сделать валидацию вводимых данных (только строки)
-    // !
-    // +3.1 - сделать свой кастомный валидатор, т.к. если в поле региона ничего не ввести будет две ошибки - NotEmpty() и Pattern()
-    // !
-    // 4)+ добавить ExceptionHandler (такого региона нет; форма для ввода не должна быть пустой)
-    // 4.1)+ ExceptionHandler для федеральных округов
     // 5) запуск в докере
-    // 6) тестирование
     // 7) документация
-    // 8)+ логгирование
-    // 9)+ Посмотреть, возможно у меня неправильный подсчет центра для округов -
-    // может там нужно считать количество "кусочков" и для каждого такого куска высчитывать центр
-    // и далее уже общий
+    // 7.1) README.md
+
     private final CoordinatesService service;
 
     public CoordinatesController(CoordinatesService service) {
