@@ -15,3 +15,7 @@ logging:
       springframework: ${LOG:info}
   file:
     name: logs/log
+
+geoCenter:
+  openapi:
+    dev-url: http://localhost:8080
