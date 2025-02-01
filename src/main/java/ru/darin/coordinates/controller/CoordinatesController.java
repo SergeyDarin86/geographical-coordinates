@@ -5,22 +5,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import ru.darin.coordinates.dto.SearchDTOForRegion;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ru.darin.coordinates.dto.SearchDTOForDistrict;
+import ru.darin.coordinates.dto.SearchDTOForRegion;
+import ru.darin.coordinates.resource.GeoCenterResource;
 import ru.darin.coordinates.service.CoordinatesService;
-import ru.darin.coordinates.util.CoordinateResponse;
 import ru.darin.coordinates.util.exceptions.CoordinatesErrorResponse;
 import ru.darin.coordinates.util.exceptions.CoordinatesException;
-import ru.darin.coordinates.util.exceptions.ExceptionBuilder;
 import ru.darin.coordinates.util.exceptions.CoordinatesExceptionNotFound;
+import ru.darin.coordinates.util.exceptions.ExceptionBuilder;
 
 @Slf4j
 @RestController
-public class CoordinatesController {
+public class CoordinatesController implements GeoCenterResource {
 
     //TODO:
-    // 5) запуск в докере
+    // 5) запуск в докере +
     // 7) документация
     // 7.1) README.md
 
@@ -40,12 +43,12 @@ public class CoordinatesController {
     }
 
     @GetMapping("/getGeoCenterForDistrict")
-    public CoordinateResponse getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult){
+    public ResponseEntity getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult){
         log.info("Start method  getGeoCenterForDistrict(searchDTO) for CoordinatesController, location is: {} ", searchDTO.getLocation());
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         String url = "https://nominatim.openstreetmap.org/search?state=" + searchDTO.getLocation() + "&country=russia&format=json&polygon_geojson=1";
         ExceptionBuilder.buildErrorMessageForClientDistrictNotFound(service.getResponseForDistrict(url));
-        return service.getCoordinatesForDistrict(url);
+        return ResponseEntity.ok(service.getCoordinatesForDistrict(url));
     }
 
     @ExceptionHandler
