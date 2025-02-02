@@ -15,7 +15,6 @@ import ru.darin.coordinates.dto.SearchDTOForDistrict;
 import ru.darin.coordinates.dto.SearchDTOForRegion;
 import ru.darin.coordinates.util.CoordinateResponse;
 import ru.darin.coordinates.util.exceptions.CoordinatesErrorResponse;
-import ru.darin.coordinates.util.exceptions.CoordinatesExceptionNotFound;
 
 @Tag(name = "API сервиса определения географического центра")
 public interface GeoCenterResource {
@@ -43,8 +42,8 @@ public interface GeoCenterResource {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Not Found"
-                    )
+                    description = "Не найдено области с таким названием"
+            )
     })
     ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTOForRegion searchDTOForRegion, BindingResult bindingResult);
 
@@ -72,9 +71,7 @@ public interface GeoCenterResource {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "Not found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CoordinatesErrorResponse.class))
+                    description = "Не найдено федерального округа с таким названием"
             )
     })
     ResponseEntity getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult);

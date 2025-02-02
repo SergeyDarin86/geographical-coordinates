@@ -22,7 +22,7 @@ public class ExceptionBuilder {
 
     public static void buildErrorMessageForClientRegionNotFound(Location[] response) {
         if (response.length == 0) {
-            String errorMsg = "Не найдено региона с таким названием";
+            String errorMsg = "Не найдено области с таким названием";
             throw new CoordinatesExceptionNotFound(errorMsg);
         }
     }
