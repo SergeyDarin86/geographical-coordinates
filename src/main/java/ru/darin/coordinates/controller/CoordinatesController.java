@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.darin.coordinates.dto.SearchDTOForDistrict;
 import ru.darin.coordinates.dto.SearchDTOForRegion;
 import ru.darin.coordinates.resource.GeoCenterResource;
@@ -33,7 +30,7 @@ public class CoordinatesController implements GeoCenterResource {
         this.service = service;
     }
 
-    @GetMapping("/getGeoCenter")
+    @PostMapping("/getGeoCenter")
     public ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTOForRegion searchDTOForRegion, BindingResult bindingResult){
         log.info("Start method  getGeoCenterForRegion(searchDTOForRegion) for CoordinatesController, location is: {} ", searchDTOForRegion.getLocation());
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
@@ -42,7 +39,7 @@ public class CoordinatesController implements GeoCenterResource {
         return ResponseEntity.ok(service.getCoordinatesForRegion(url));
     }
 
-    @GetMapping("/getGeoCenterForDistrict")
+    @PostMapping("/getGeoCenterForDistrict")
     public ResponseEntity getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult){
         log.info("Start method  getGeoCenterForDistrict(searchDTO) for CoordinatesController, location is: {} ", searchDTO.getLocation());
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
