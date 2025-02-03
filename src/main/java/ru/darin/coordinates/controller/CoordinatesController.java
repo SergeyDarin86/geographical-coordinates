@@ -19,11 +19,6 @@ import ru.darin.coordinates.util.exceptions.ExceptionBuilder;
 @RestController
 public class CoordinatesController implements GeoCenterResource {
 
-    //TODO:
-    // 5) запуск в докере +
-    // 7) документация
-    // 7.1) README.md
-
     private final CoordinatesService service;
 
     public CoordinatesController(CoordinatesService service) {
@@ -31,7 +26,7 @@ public class CoordinatesController implements GeoCenterResource {
     }
 
     @PostMapping("/getGeoCenter")
-    public ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTOForRegion searchDTOForRegion, BindingResult bindingResult){
+    public ResponseEntity getGeoCenterForRegion(@RequestBody @Valid SearchDTOForRegion searchDTOForRegion, BindingResult bindingResult) {
         log.info("Start method  getGeoCenterForRegion(searchDTOForRegion) for CoordinatesController, location is: {} ", searchDTOForRegion.getLocation());
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         String url = "https://nominatim.openstreetmap.org/search?state=" + searchDTOForRegion.getLocation() + "&country=russia&format=json&polygon_geojson=1";
@@ -40,7 +35,7 @@ public class CoordinatesController implements GeoCenterResource {
     }
 
     @PostMapping("/getGeoCenterForDistrict")
-    public ResponseEntity getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult){
+    public ResponseEntity getGeoCenterForDistrict(@RequestBody @Valid SearchDTOForDistrict searchDTO, BindingResult bindingResult) {
         log.info("Start method  getGeoCenterForDistrict(searchDTO) for CoordinatesController, location is: {} ", searchDTO.getLocation());
         ExceptionBuilder.buildErrorMessageForClient(bindingResult);
         String url = "https://nominatim.openstreetmap.org/search?state=" + searchDTO.getLocation() + "&country=russia&format=json&polygon_geojson=1";
