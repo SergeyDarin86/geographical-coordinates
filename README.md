@@ -49,7 +49,7 @@
   <img src="img/wrong_format.png" alt="drawing" width="700"/>
 </h2>
 
-- пустое поле для области:
+- пустое поле для области/федерального округа:
 
 <h2 align="center">
   <img src="img/wrong_length.png" alt="drawing" width="700"/>

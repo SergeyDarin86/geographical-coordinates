@@ -14,8 +14,6 @@ public class Region {
     private Integer regionId;
 
     @NotEmpty(message = "Поле обязательно для заполнения")
-    // должны быть только буквы
-//    @Pattern(regexp = "[A-Z][a-z]+", message = "Название города нужно писать на английском")
     @Column(name = "region_name")
     @Getter
     @Setter

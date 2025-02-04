@@ -30,7 +30,6 @@ public class OpenAPIConfig {
         contact.setEmail("swd86@mail.ru");
         contact.setName("Sergey Darin");
 
-
         Info info = new Info()
                 .title("Руководство использования сервиса API")
                 .version("1.0")
