@@ -1,0 +1,205 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Руководство использования сервиса API",
+    "description": "Сервис предназначен для: \n- сбора данных о границах областей и федеральных округов (массив координат); \n- расчета географического центра для областей и федеральных округов на основе собранных данных.",
+    "contact": {
+      "name": "Sergey Darin",
+      "email": "swd86@mail.ru"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Server URL in Development environment"
+    }
+  ],
+  "paths": {
+    "/getGeoCenter": {
+      "post": {
+        "tags": [
+          "API сервиса определения географического центра"
+        ],
+        "summary": "Расчет географического центра для области.",
+        "description": "Данный метод выполняет поиск введенной области и рассчитывает для нее географический центр.\nНеобходимо ввести интересующую область.",
+        "operationId": "getGeoCenterForRegion",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchDTOForRegion"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Метод успешно выполнен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CoordinateResponse"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено области с таким названием",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatesErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getGeoCenterForDistrict": {
+      "post": {
+        "tags": [
+          "API сервиса определения географического центра"
+        ],
+        "summary": "Расчет географического центра для федерального округа (ФО).",
+        "description": "Данный метод выполняет поиск введенного ФО и рассчитывает для него географический центр.\nНеобходимо ввести интересующий ФО.",
+        "operationId": "getGeoCenterForDistrict",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchDTOForDistrict"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Метод успешно выполнен",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CoordinateResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoordinatesErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Не найдено федерального округа с таким названием",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SearchDTOForRegion": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "Название области",
+            "example": "Тульская область"
+          }
+        },
+        "description": "DTO для поиска географического центра области."
+      },
+      "CoordinateResponse": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Название региона",
+            "example": "Тульская область"
+          },
+          "coordinatesForGeoCenter": {
+            "$ref": "#/components/schemas/CoordinatesForGeoCenter"
+          }
+        },
+        "description": "Класс для вывода результатов поиска."
+      },
+      "CoordinatesForGeoCenter": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "Широта",
+            "format": "double",
+            "example": 54.5868714537444
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Долгота",
+            "format": "double",
+            "example": 50.580036565417
+          }
+        },
+        "description": "Класс для вывода координат географического центра."
+      },
+      "CoordinatesErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Текст сообщения об ошибке",
+            "example": "Название региона должно соответствовать следующему формату: 'Нижегородская область' либо 'Нижегородская обл'"
+          },
+          "timestamp": {
+            "type": "integer",
+            "description": "Временная метка (timestamp)",
+            "format": "int64",
+            "example": 1729178966070
+          }
+        },
+        "description": "Класс, возвращающий текст ошибки пользователю в случае некорректно введенных данных."
+      },
+      "SearchDTOForDistrict": {
+        "type": "object",
+        "properties": {
+          "location": {
+            "type": "string",
+            "description": "Название федерального округа",
+            "example": "пфо"
+          }
+        },
+        "description": "DTO для поиска географического центра федерального округа."
+      }
+    }
+  }
+}
